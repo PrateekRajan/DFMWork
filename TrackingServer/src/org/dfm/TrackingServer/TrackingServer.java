@@ -137,28 +137,28 @@ public class TrackingServer extends HttpServlet {
 
 	private Boolean writetodb() {
 		Connection con = null;
-		Statement query = null;
+		Statement statement = null;
+		ResultSet rs = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
 			con = DriverManager
-					.getConnection("jdbc:sqlite:C:/Users/Prateek/Desktop/mydatabase.db");
-			query = con.createStatement();
-			query.executeQuery("INSERT INTO URLinformation (userid, auth, mid, cookie, json) VALUES ("
+					.getConnection("jdbc:sqlite:C:/Users/Prateek/Desktop/mydatabase.sqlite");
+			statement = con.createStatement();
+			String query = "INSERT INTO URLinformation (userid, auth, mid, cookie, json) VALUES ('"
 					+ uid
-					+ ","
+					+ "','"
 					+ auth
-					+ ","
+					+ "','"
 					+ mid
-					+ ","
+					+ "','"
 					+ cookie
-					+ ","
-					+ json
-					+ ")");
-			System.out.println("HELLo");
+					+ "','"
+					+ json + "');";
+			statement.executeQuery(query);
 			writtentodb = true;
 		} catch (SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 
 		return writtentodb;
