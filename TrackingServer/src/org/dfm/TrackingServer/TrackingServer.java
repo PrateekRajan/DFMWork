@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 public class TrackingServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * TODO  enable via logging class
+	 */
 	 static Boolean enableLogger =false;
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
