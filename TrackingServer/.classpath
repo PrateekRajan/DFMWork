@@ -21,6 +21,6 @@
 	<classpathentry kind="lib" path="C:/Users/Prateek/Downloads/google-gson-2.2.4-release/google-gson-2.2.4/gson-2.2.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Prateek/Downloads/google-gson-2.2.4-release/google-gson-2.2.4/gson-2.2.4-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Prateek/Downloads/google-gson-2.2.4-release/google-gson-2.2.4/gson-2.2.4-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Prateek/Downloads/sqlite-jdbc-3.7.15-SNAPSHOT-2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Prateek/Downloads/sqlite-jdbc-3.7.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

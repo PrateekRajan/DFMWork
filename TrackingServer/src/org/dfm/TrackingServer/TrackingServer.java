@@ -49,9 +49,9 @@ public class TrackingServer extends HttpServlet {
 		if (ts == null) {
 			ts = new TrackingServer();
 		}
-
-		payload = request.getPathInfo();
-		decodedurl = ts.decodeURL(payload);
+		String temp = "127.0.0.1 - - [Tue, 21 May 2013 22:26:48 GMT] GET /events/markethealth?auth=VUEtMTIzNDM=&uid=MTNlYzkyZjQzODUtM2M4ZjQ4MGUtYWE2MC00MWJhLWFiYTAtZDkyZjBkYjg1N2Y2&event=eyIkcGFnZV9pbmZvIjp7InVybCI6Imh0dHA6Ly9hc3NldHMuZGVlcGZvcmVzdG1lZGlhLmNvbS9pbmRleC5odG1sIiwidWEiOiJNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMF84XzMpIEFwcGxlV2ViS2l0LzUzNy4zMSAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8yNi4wLjE0MTAuNjUgU2FmYXJpLzUzNy4zMSJ9LCIkbGliX3ZlciI6IjAuOS4yIiwiaW5pdGlhbFJlZmVycmVyIjoiIiwidXNlcm5hbWUiOiJ0ZXN0ZXIiLCIkZXZlbnRfbmFtZSI6IiRwYWdldmlldyIsIiRwYWdlIjoiaHR0cDovL2Fzc2V0cy5kZWVwZm9yZXN0bWVkaWEuY29tL2luZGV4Lmh0bWwifQ==&_=MTM2OTE3NTIwODI1Mg== HTTP/1.1 200 2 http://assets.deepforestmedia.com/index.html Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31";
+		// payload = request.getPathInfo();
+		decodedurl = ts.decodeURL(temp);
 		ts.extractParts(decodedurl);
 		ts.base64utf();
 		ts.decodeJSON();
@@ -136,15 +136,14 @@ public class TrackingServer extends HttpServlet {
 	}
 
 	private Boolean writetodb() {
-
 		Connection con = null;
-		ResultSet rs = null;
 		Statement query = null;
 		try {
+			Class.forName("org.sqlite.JDBC");
 			con = DriverManager
 					.getConnection("jdbc:sqlite:C:/Users/Prateek/Desktop/mydatabase.db");
 			query = con.createStatement();
-			query.executeQuery("INSERT INTO URLinfo (userid, auth, mid, cookie, json) VALUES ("
+			query.executeQuery("INSERT INTO URLinformation (userid, auth, mid, cookie, json) VALUES ("
 					+ uid
 					+ ","
 					+ auth
@@ -155,8 +154,9 @@ public class TrackingServer extends HttpServlet {
 					+ ","
 					+ json
 					+ ")");
+			System.out.println("HELLo");
 			writtentodb = true;
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -173,17 +173,6 @@ public class TrackingServer extends HttpServlet {
 		payload = request.getPathInfo();
 		decodeURL(payload);
 		// TODO Auto-generated method stub
-	}
-
-	private void decodeJson(String payload) {
-
-		try {
-			String decodedurl = URLDecoder.decode(payload, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 
 }
