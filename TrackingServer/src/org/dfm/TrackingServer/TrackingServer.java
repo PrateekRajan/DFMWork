@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import org.apache.commons.codec.binary.Base64;
 
@@ -213,6 +215,9 @@ public class TrackingServer extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		BufferedReader br = null;
+		OutputStreamWriter writer = new OutputStreamWriter(
+				response.getOutputStream(), "UTF-8");
+
 		StringBuilder stringBuilder = new StringBuilder();
 		try {
 			InputStream inputStream = request.getInputStream();
@@ -237,7 +242,9 @@ public class TrackingServer extends HttpServlet {
 				}
 			}
 		}
-		System.out.println(stringBuilder);
+		writer.write("<html><head></head><body><h1>Home<h1><p>" + stringBuilder
+				+ "</p></body></html>");
+		writer.flush();
 	}
 
 }
