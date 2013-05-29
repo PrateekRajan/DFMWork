@@ -1,6 +1,9 @@
 package org.dfm.TrackingServer;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import org.apache.commons.codec.binary.Base64;
 
@@ -52,8 +55,6 @@ public class TrackingServer extends HttpServlet {
 			ts = new TrackingServer();
 		}
 		payload = request.getQueryString();
-		// payload = request.getPathInfo();
-		System.out.println(payload);
 		decodedurl = ts.decodeURL(payload);
 		ts.extractParts(decodedurl);
 		ts.base64utf();
@@ -178,7 +179,6 @@ public class TrackingServer extends HttpServlet {
 
 		} catch (SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			System.out.println(e.toString());
 
 		}
 		try {
@@ -194,7 +194,6 @@ public class TrackingServer extends HttpServlet {
 			statement.executeQuery(query1);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println(e.toString());
 		}
 		try {
 			String query2 = "INSERT INTO UserInfo (userid, auth) VALUES ('"
@@ -203,7 +202,6 @@ public class TrackingServer extends HttpServlet {
 			writtentodb = true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println(e.toString());
 		}
 		return writtentodb;
 	}
@@ -214,9 +212,32 @@ public class TrackingServer extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		payload = request.getPathInfo();
-		decodeURL(payload);
-		// TODO Auto-generated method stub
+		BufferedReader br = null;
+		StringBuilder stringBuilder = new StringBuilder();
+		try {
+			InputStream inputStream = request.getInputStream();
+			if (inputStream != null) {
+				br = new BufferedReader(new InputStreamReader(inputStream));
+				char[] charBuffer = new char[128];
+				int bytesRead = -1;
+				while ((bytesRead = br.read(charBuffer)) > 0) {
+					stringBuilder.append(charBuffer, 0, bytesRead);
+				}
+			} else {
+				stringBuilder.append("");
+			}
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException ex) {
+					throw ex;
+				}
+			}
+		}
+		System.out.println(stringBuilder);
 	}
 
 }
