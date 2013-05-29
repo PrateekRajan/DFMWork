@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import org.apache.commons.codec.binary.Base64;
 
+import java.net.URL;
 import java.net.URLDecoder;
 import java.sql.*;
 import java.util.Vector;
@@ -27,21 +28,22 @@ public class TrackingServer extends HttpServlet {
 	 *      response)
 	 */
 	JsonParser parser = new JsonParser();
-	static Vector<String> vec = new Vector<String>();
-	private Boolean writtentodb = false;
-	private String payload = null;
-	private String decodedurl = null;
-	private String uid = null;
-	private String auth = null;
-	private String cookie = null;
-	private String json = null;
-	private String mid = null;
-	private String jsonurl = null;
-	private String ua = null;
-	private String libver = null;
-	private String iniref = null;
-	private String uname = null;
-	private String ename = null;
+
+	Vector<String> vec = new Vector<String>();
+	Boolean writtentodb = false;
+	String payload = null;
+	String decodedurl = null;
+	String uid = null;
+	String auth = null;
+	String cookie = null;
+	String json = null;
+	String mid = null;
+	String jsonurl = null;
+	String ua = null;
+	String libver = null;
+	String iniref = null;
+	String uname = null;
+	String ename = null;
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -49,14 +51,15 @@ public class TrackingServer extends HttpServlet {
 		if (ts == null) {
 			ts = new TrackingServer();
 		}
-		// String temp =
-		// "127.0.0.1 - - [Tue, 21 May 2013 22:26:48 GMT] GET /events/markethealth?auth=VUEtMTIzNDM=&uid=MTNlYzkyZjQzODUtM2M4ZjQ4MGUtYWE2MC00MWJhLWFiYTAtZDkyZjBkYjg1N2Y2&event=eyIkcGFnZV9pbmZvIjp7InVybCI6Imh0dHA6Ly9hc3NldHMuZGVlcGZvcmVzdG1lZGlhLmNvbS9pbmRleC5odG1sIiwidWEiOiJNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMF84XzMpIEFwcGxlV2ViS2l0LzUzNy4zMSAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8yNi4wLjE0MTAuNjUgU2FmYXJpLzUzNy4zMSJ9LCIkbGliX3ZlciI6IjAuOS4yIiwiaW5pdGlhbFJlZmVycmVyIjoiIiwidXNlcm5hbWUiOiJ0ZXN0ZXIiLCIkZXZlbnRfbmFtZSI6IiRwYWdldmlldyIsIiRwYWdlIjoiaHR0cDovL2Fzc2V0cy5kZWVwZm9yZXN0bWVkaWEuY29tL2luZGV4Lmh0bWwifQ==&_=MTM2OTE3NTIwODI1Mg== HTTP/1.1 200 2 http://assets.deepforestmedia.com/index.html Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31";
-		payload = request.getPathInfo();
+		payload = request.getQueryString();
+		// payload = request.getPathInfo();
+		System.out.println(payload);
 		decodedurl = ts.decodeURL(payload);
 		ts.extractParts(decodedurl);
 		ts.base64utf();
 		ts.decodeJSON();
 		ts.writetodb();
+		ts.clear();
 
 	}
 
@@ -97,6 +100,22 @@ public class TrackingServer extends HttpServlet {
 
 	}
 
+	private void clear() {
+		payload = null;
+		decodedurl = null;
+		uid = null;
+		auth = null;
+		cookie = null;
+		json = null;
+		mid = null;
+		jsonurl = null;
+		ua = null;
+		libver = null;
+		iniref = null;
+		uname = null;
+		ename = null;
+	}
+
 	private void base64utf() {
 		try {
 			auth = new String(Base64.decodeBase64(auth), "UTF-8");
@@ -114,8 +133,9 @@ public class TrackingServer extends HttpServlet {
 	 */
 	private String decodeURL(String payload) {
 		try {
-			String temp = "127.0.0.1 - - [Tue, 21 May 2013 22:26:48 GMT] GET /events/markethealth?auth=VUEtMTIzNDM=&uid=MTNlYzkyZjQzODUtM2M4ZjQ4MGUtYWE2MC00MWJhLWFiYTAtZDkyZjBkYjg1N2Y2&event=eyIkcGFnZV9pbmZvIjp7InVybCI6Imh0dHA6Ly9hc3NldHMuZGVlcGZvcmVzdG1lZGlhLmNvbS9pbmRleC5odG1sIiwidWEiOiJNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMF84XzMpIEFwcGxlV2ViS2l0LzUzNy4zMSAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8yNi4wLjE0MTAuNjUgU2FmYXJpLzUzNy4zMSJ9LCIkbGliX3ZlciI6IjAuOS4yIiwiaW5pdGlhbFJlZmVycmVyIjoiIiwidXNlcm5hbWUiOiJ0ZXN0ZXIiLCIkZXZlbnRfbmFtZSI6IiRwYWdldmlldyIsIiRwYWdlIjoiaHR0cDovL2Fzc2V0cy5kZWVwZm9yZXN0bWVkaWEuY29tL2luZGV4Lmh0bWwifQ==&_=MTM2OTE3NTIwODI1Mg== HTTP/1.1 200 2 http://assets.deepforestmedia.com/index.html Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31";
-			decodedurl = URLDecoder.decode(temp, "UTF-8");
+			// String temp =
+			// "127.0.0.1 - - [Tue, 21 May 2013 22:26:48 GMT] GET /events/markethealth?auth=VUEtMTIzNDM=&uid=MTNlYzkyZjQzODUtM2M4ZjQ4MGUtYWE2MC00MWJhLWFiYTAtZDkyZjBkYjg1N2Y2&event=eyIkcGFnZV9pbmZvIjp7InVybCI6Imh0dHA6Ly9hc3NldHMuZGVlcGZvcmVzdG1lZGlhLmNvbS9pbmRleC5odG1sIiwidWEiOiJNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMF84XzMpIEFwcGxlV2ViS2l0LzUzNy4zMSAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8yNi4wLjE0MTAuNjUgU2FmYXJpLzUzNy4zMSJ9LCIkbGliX3ZlciI6IjAuOS4yIiwiaW5pdGlhbFJlZmVycmVyIjoiIiwidXNlcm5hbWUiOiJ0ZXN0ZXIiLCIkZXZlbnRfbmFtZSI6IiRwYWdldmlldyIsIiRwYWdlIjoiaHR0cDovL2Fzc2V0cy5kZWVwZm9yZXN0bWVkaWEuY29tL2luZGV4Lmh0bWwifQ==&_=MTM2OTE3NTIwODI1Mg== HTTP/1.1 200 2 http://assets.deepforestmedia.com/index.html Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31";
+			decodedurl = URLDecoder.decode(payload, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
