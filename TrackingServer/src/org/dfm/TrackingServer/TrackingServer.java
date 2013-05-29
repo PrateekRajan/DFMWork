@@ -34,22 +34,30 @@ public class TrackingServer extends HttpServlet {
 	 */
 	JsonParser parser = new JsonParser();
 
-	Vector<String> vec = new Vector<String>();
-	Boolean writtentodb = false;
-	String payload = null;
-	String decodedurl = null;
-	String uid = null;
-	String auth = null;
-	String cookie = null;
-	String json = null;
-	String mid = null;
-	String jsonurl = null;
-	String ua = null;
-	String libver = null;
-	String iniref = null;
-	String uname = null;
-	String ename = null;
+	private Vector<String> vec = new Vector<String>();
+	private Boolean writtentodb = false;
+	private String payload = null;
+	private String decodedurl = null;
+	private String uid = null;
+	private String auth = null;
+	private String cookie = null;
+	private String json = null;
+	private String mid = null;
+	private String jsonurl = null;
+	private String ua = null;
+	private String libver = null;
+	private String iniref = null;
+	private String uname = null;
+	private String ename = null;
 
+	/**
+	 * @author Prateek
+	 * @breif Gets the request from the browser and forwards it for parsing
+	 * @param HTTP
+	 *            request
+	 * @param HTTP
+	 *            response
+	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		TrackingServer ts = null;
@@ -59,13 +67,21 @@ public class TrackingServer extends HttpServlet {
 		payload = request.getQueryString();
 		decodedurl = ts.decodeURL(payload);
 		ts.extractParts(decodedurl);
-		ts.base64utf();
+		ts.base64utf(auth, cookie, json);
 		ts.decodeJSON();
-		ts.writetodb();
-		ts.clear();
+		writtentodb = ts.writetodb();
+		if (writtentodb.booleanValue() == true) {
+			ts.clear();
+		} else {
+			System.out.println("There was an error writing to the database");
+		}
 
 	}
 
+	/**
+	 * @author Prateek
+	 * @param decodedurl
+	 */
 	private void extractParts(String decodedurl) {
 		String[] localurl = decodedurl.split("==");
 		localurl[0] = localurl[0].replaceAll("\"", " ");
@@ -103,6 +119,11 @@ public class TrackingServer extends HttpServlet {
 
 	}
 
+	/**
+	 * @author Prateek
+	 * @brief Clears the variables after the necessary information is uploaded
+	 *        into the database
+	 */
 	private void clear() {
 		payload = null;
 		decodedurl = null;
@@ -119,7 +140,14 @@ public class TrackingServer extends HttpServlet {
 		ename = null;
 	}
 
-	private void base64utf() {
+	/**
+	 * @author Prateek
+	 * @brief Converts the base64 string to UTF-8 format for later processing
+	 * @param auth
+	 * @param cookie
+	 * @param json
+	 */
+	private void base64utf(String auth, String cookie, String json) {
 		try {
 			auth = new String(Base64.decodeBase64(auth), "UTF-8");
 			cookie = new String(Base64.decodeBase64(cookie), "UTF-8");
@@ -131,8 +159,9 @@ public class TrackingServer extends HttpServlet {
 	}
 
 	/**
-	 * @brief
-	 * @param
+	 * @author Prateek
+	 * @brief Decodes the URL
+	 * @param payload
 	 */
 	private String decodeURL(String payload) {
 		try {
