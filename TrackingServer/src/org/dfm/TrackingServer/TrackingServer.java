@@ -9,7 +9,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import org.apache.commons.codec.binary.Base64;
 
-import java.net.URL;
 import java.net.URLDecoder;
 import java.sql.*;
 import java.util.Vector;
@@ -33,7 +32,6 @@ public class TrackingServer extends HttpServlet {
 	 *      response)
 	 */
 	JsonParser parser = new JsonParser();
-
 	private Vector<String> vec = new Vector<String>();
 	private Boolean writtentodb = false;
 	private String payload = null;
@@ -67,11 +65,17 @@ public class TrackingServer extends HttpServlet {
 		payload = request.getQueryString();
 		decodedurl = ts.decodeURL(payload);
 		ts.extractParts(decodedurl);
-		ts.base64utf(auth, cookie, json);
+		ts.base64utf();
 		ts.decodeJSON();
 		writtentodb = ts.writetodb();
 		if (writtentodb.booleanValue() == true) {
+			OutputStreamWriter writer = new OutputStreamWriter(
+					response.getOutputStream(), "UTF-8");
+			String browser_output = "<html><head></head><body><h1>Success<h1><p> The data has been added to the database</p></body></html>";
+			writer.write(browser_output);
+			writer.flush();
 			ts.clear();
+
 		} else {
 			System.out.println("There was an error writing to the database");
 		}
@@ -147,7 +151,7 @@ public class TrackingServer extends HttpServlet {
 	 * @param cookie
 	 * @param json
 	 */
-	private void base64utf(String auth, String cookie, String json) {
+	private void base64utf() {
 		try {
 			auth = new String(Base64.decodeBase64(auth), "UTF-8");
 			cookie = new String(Base64.decodeBase64(cookie), "UTF-8");
@@ -160,8 +164,10 @@ public class TrackingServer extends HttpServlet {
 
 	/**
 	 * @author Prateek
-	 * @brief Decodes the URL
+	 * @brief Decodes the URL (Removes the URL encoding introduced in the URL
+	 *        definition)
 	 * @param payload
+	 * @return decodedurl
 	 */
 	private String decodeURL(String payload) {
 		try {
@@ -175,6 +181,11 @@ public class TrackingServer extends HttpServlet {
 		return decodedurl;
 	}
 
+	/**
+	 * @author Prateek
+	 * @brief Extracts different parts from the JSON object received with the
+	 *        GET request
+	 */
 	private void decodeJSON() {
 		JsonObject obj = parser.parse(json).getAsJsonObject();
 		String pageinfo = obj.get("$page_info").toString();
@@ -188,6 +199,12 @@ public class TrackingServer extends HttpServlet {
 
 	}
 
+	/**
+	 * @brief Writes the extracted information (stored in variables) into SQlite
+	 *        database
+	 * @author Prateek
+	 * @return writtentodb
+	 */
 	private Boolean writetodb() {
 		Connection con = null;
 		Statement statement = null;
@@ -206,7 +223,7 @@ public class TrackingServer extends HttpServlet {
 					+ cookie
 					+ "','"
 					+ json + "');";
-			statement.executeQuery(query);
+			statement.executeUpdate(query);
 
 		} catch (SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -222,14 +239,15 @@ public class TrackingServer extends HttpServlet {
 					+ "','"
 					+ iniref
 					+ "','" + uname + "','" + ename + "');";
-			statement.executeQuery(query1);
+			statement.executeUpdate(query1);
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 		}
 		try {
 			String query2 = "INSERT INTO UserInfo (userid, auth) VALUES ('"
 					+ uid + "','" + auth + "');";
-			statement.executeQuery(query2);
+			statement.executeUpdate(query2);
 			writtentodb = true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
