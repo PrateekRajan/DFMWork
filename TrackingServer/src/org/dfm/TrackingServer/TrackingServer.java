@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class TrackingServer
  */
-@WebServlet(description = "Extracts information fields from the URL and puts it into MySql database", urlPatterns = { "/TrackingServer" })
+@WebServlet(description = "Extracts information fields from the HTTP request and puts it into MySql database", urlPatterns = { "/TrackingServer" })
 public class TrackingServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -50,7 +50,7 @@ public class TrackingServer extends HttpServlet {
 
 	/**
 	 * @author Prateek
-	 * @breif Gets the request from the browser and forwards it for parsing
+	 * @brief Gets the request from the browser and forwards it for parsing
 	 * @param HTTP
 	 *            request
 	 * @param HTTP
@@ -205,6 +205,12 @@ public class TrackingServer extends HttpServlet {
 	 * @author Prateek
 	 * @return writtentodb
 	 */
+
+	/*
+	 * TODO---> Create object based on the type of database connected. The
+	 * object of the connected database would be returned which will be used to
+	 * insert data into the database.
+	 */
 	private Boolean writetodb() {
 		Connection con = null;
 		Statement statement = null;
@@ -258,6 +264,11 @@ public class TrackingServer extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
+	 */
+
+	/*
+	 * TODO---> As soon as structure of the post request is known then parse the
+	 * body of the request and insert the data into the database.
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
