@@ -1,6 +1,9 @@
 package org.dfm.TrackingServer;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +36,9 @@ public class TrackingServer extends HttpServlet {
 	 */
 	JsonParser parser = new JsonParser();
 	private Vector<String> vec = new Vector<String>();
+	private Boolean writetoHbase = false;
+	private Boolean writetoSqlite = false;
+	private Boolean writetoMongoDB = false;
 	private Boolean writtentodb = false;
 	private String payload = null;
 	private String decodedurl = null;
@@ -48,6 +54,38 @@ public class TrackingServer extends HttpServlet {
 	private String uname = null;
 	private String ename = null;
 
+	/*
+	 * @author Prateek
+	 * 
+	 * @brief Check the configuration file for the database that needs to be
+	 * used for data insertion
+	 */
+	public void init() {
+		FileInputStream fstream;
+		try {
+			fstream = new FileInputStream(
+					"C:\\Users\\Prateek\\Desktop\\Databaseconfig.txt");
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (line.contains("Hbase = 1")) {
+					writetoHbase = true;
+
+				} else if (line.contains("Sqlite = 1")) {
+					writetoSqlite = true;
+
+				} else if (line.contains("MongoDB = 1")) {
+					writetoMongoDB = true;
+				}
+			}
+			in.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.toString());
+		}
+	}
+
 	/**
 	 * @author Prateek
 	 * @brief Gets the request from the browser and forwards it for parsing
@@ -56,6 +94,7 @@ public class TrackingServer extends HttpServlet {
 	 * @param HTTP
 	 *            response
 	 */
+
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		TrackingServer ts = null;
@@ -67,7 +106,14 @@ public class TrackingServer extends HttpServlet {
 		ts.extractParts(decodedurl);
 		ts.base64utf();
 		ts.decodeJSON();
-		writtentodb = ts.writetodb();
+		if (writetoSqlite.booleanValue() == true) {
+			writtentodb = ts.writetosqlite();
+		} else if (writetoHbase.booleanValue() == true) {
+			writtentodb = ts.writetohbase();
+		} else if (writetoMongoDB.booleanValue() == true) {
+			writtentodb = ts.writetomongodb();
+		}
+		writtentodb = ts.writetosqlite();
 		if (writtentodb.booleanValue() == true) {
 			OutputStreamWriter writer = new OutputStreamWriter(
 					response.getOutputStream(), "UTF-8");
@@ -80,6 +126,16 @@ public class TrackingServer extends HttpServlet {
 			System.out.println("There was an error writing to the database");
 		}
 
+	}
+
+	private Boolean writetomongodb() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Boolean writetohbase() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -211,7 +267,7 @@ public class TrackingServer extends HttpServlet {
 	 * object of the connected database would be returned which will be used to
 	 * insert data into the database.
 	 */
-	private Boolean writetodb() {
+	private Boolean writetosqlite() {
 		Connection con = null;
 		Statement statement = null;
 		try {
