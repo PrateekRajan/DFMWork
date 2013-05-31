@@ -81,7 +81,7 @@ public class TrackingServer extends HttpServlet {
 			}
 			in.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			System.out.println(e.toString());
 		}
 	}
@@ -129,12 +129,14 @@ public class TrackingServer extends HttpServlet {
 	}
 
 	private Boolean writetomongodb() {
-		// TODO Auto-generated method stub
+		// TODO Load mongoDB drivers and connection parameters and then write to
+		// DB
 		return null;
 	}
 
 	private Boolean writetohbase() {
-		// TODO Auto-generated method stub
+		// TODO Load HBase drivers and connection parameters and then write to
+		// DB
 		return null;
 	}
 
@@ -213,8 +215,7 @@ public class TrackingServer extends HttpServlet {
 			cookie = new String(Base64.decodeBase64(cookie), "UTF-8");
 			json = new String(Base64.decodeBase64(json), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.toString());
 		}
 	}
 
@@ -227,8 +228,6 @@ public class TrackingServer extends HttpServlet {
 	 */
 	private String decodeURL(String payload) {
 		try {
-			// String temp =
-			// "127.0.0.1 - - [Tue, 21 May 2013 22:26:48 GMT] GET /events/markethealth?auth=VUEtMTIzNDM=&uid=MTNlYzkyZjQzODUtM2M4ZjQ4MGUtYWE2MC00MWJhLWFiYTAtZDkyZjBkYjg1N2Y2&event=eyIkcGFnZV9pbmZvIjp7InVybCI6Imh0dHA6Ly9hc3NldHMuZGVlcGZvcmVzdG1lZGlhLmNvbS9pbmRleC5odG1sIiwidWEiOiJNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMF84XzMpIEFwcGxlV2ViS2l0LzUzNy4zMSAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8yNi4wLjE0MTAuNjUgU2FmYXJpLzUzNy4zMSJ9LCIkbGliX3ZlciI6IjAuOS4yIiwiaW5pdGlhbFJlZmVycmVyIjoiIiwidXNlcm5hbWUiOiJ0ZXN0ZXIiLCIkZXZlbnRfbmFtZSI6IiRwYWdldmlldyIsIiRwYWdlIjoiaHR0cDovL2Fzc2V0cy5kZWVwZm9yZXN0bWVkaWEuY29tL2luZGV4Lmh0bWwifQ==&_=MTM2OTE3NTIwODI1Mg== HTTP/1.1 200 2 http://assets.deepforestmedia.com/index.html Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31";
 			decodedurl = URLDecoder.decode(payload, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -288,8 +287,7 @@ public class TrackingServer extends HttpServlet {
 			statement.executeUpdate(query);
 
 		} catch (SQLException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-
+			System.out.println(e.toString());
 		}
 		try {
 			String query1 = "INSERT INTO JsonInfo (url, ua, libver, iniref, uname, ename) VALUES ('"
@@ -324,7 +322,9 @@ public class TrackingServer extends HttpServlet {
 
 	/*
 	 * TODO---> As soon as structure of the post request is known then parse the
-	 * body of the request and insert the data into the database.
+	 * body of the request and insert the data into the database.For now it is
+	 * just parsing the body of POST and throws whatever it finds on the browser
+	 * window.
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
