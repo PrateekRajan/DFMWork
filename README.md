@@ -9,4 +9,4 @@ In Revision 1.1 the GET request is handled properly with Sqlite and the dumping 
 
 Revision 1.2(In Progress)
 
-In Revision 1.2 the intent is to use databases like MongoDB & HBase as dumbing databases.
+In Revision 1.2 the intent is to use databases like MongoDB & HBase as dumping databases.
